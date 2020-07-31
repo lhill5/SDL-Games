@@ -29,9 +29,11 @@ int main(void) {
 
 	float fps = 10;
 	int up = 0, down = 0, left = 0, right = 0;
-	int has_reset = 1;
 
-	// return 1;
+	int x_pos = hero.get_xpos();
+	int y_pos = hero.get_ypos();
+	int x_vel, y_vel;
+
 	// animation loop
 	bool game_loop = true;
 	while (game_loop) {
@@ -48,25 +50,28 @@ int main(void) {
 						case SDL_SCANCODE_A:
 						case SDL_SCANCODE_LEFT:
 							left = 1;
+							right = up = down = 0; // limits player to only move in one direction
 							break;
 						case SDL_SCANCODE_D:
 						case SDL_SCANCODE_RIGHT:
 							right = 1;
+							left = up = down = 0;
 							break;
 						case SDL_SCANCODE_W:
 						case SDL_SCANCODE_UP:
 							up = 1;
+							left = right = down = 0;
 							break;
 						case SDL_SCANCODE_S:
 						case SDL_SCANCODE_DOWN:
 							down = 1;
+							left = right = up = 0;
 							break;
 						default:
 							break;
 					}
 					break;
 				case SDL_KEYUP:
-					has_reset = 1;
 					// cout << "keyup" << endl;
 					switch(event.key.keysym.scancode) {
 						case SDL_SCANCODE_A:
@@ -90,22 +95,16 @@ int main(void) {
 					}
 					break;
 			}
-			cout << left << " " << right << " " << up << " " << down << endl;
 		}
 
-		SDL_RenderClear(mainRend);
-		int error = SDL_RenderCopy(mainRend, background, NULL, NULL);
-		// if (error != 0) {
-		// 	cout << "error copying background" << endl;
-		// }
-		hero.walk(left, right, up, down);
-		// if (left && has_reset) {
 
-		// 	hero._draw_animation("walk_left");
-		// 	// has_reset = 0;
-		// } else {
-		// 	hero._draw_animation("walk_left", false);
-		// }
+		// cout << left << " " << right << " " << up << " " << down << endl;
+
+		SDL_RenderClear(mainRend);
+
+		int error = SDL_RenderCopy(mainRend, background, NULL, NULL);
+		hero.walk(left, right, up, down);
+
 		SDL_RenderPresent(mainRend);
 
 

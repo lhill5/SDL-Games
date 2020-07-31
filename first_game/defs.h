@@ -1,8 +1,11 @@
 #ifndef DEFSH
 #define DEFSH
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+// #define WINDOW_WIDTH 640
+// #define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 750
+#define PLAYER_SPEED 50
 
 #include <iostream>
 #include <vector>

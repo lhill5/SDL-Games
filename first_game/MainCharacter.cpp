@@ -5,8 +5,32 @@ MainCharacter::MainCharacter(SDL_Renderer* mainRend) {
 	// creates reference to main renderer used to draw images to canvas
 	this->mainRend = mainRend;
 	// loads in sprites to MainCharacter instance
-	this->_load_in_images("images/zombie_images");
+	this->_load_in_images("images/character_images");
 
+};
+
+
+void MainCharacter::set_xpos(int x_pos) {
+	if (x_pos >= 0 and x_pos <= WINDOW_WIDTH - this->width) {
+		this->x_pos = x_pos;
+	}
+};
+
+
+int MainCharacter::get_xpos() {
+	return this->x_pos;
+};
+
+
+void MainCharacter::set_ypos(int y_pos) {
+	if (y_pos >= 0 and y_pos <= WINDOW_HEIGHT - this->height) {
+		this->y_pos = y_pos;
+	}
+};
+
+
+int MainCharacter::get_ypos() {
+	return this->y_pos;
 };
 
 
@@ -80,9 +104,10 @@ int get_num_files_in_folder(string folder_name) {
 };
 
 
-void MainCharacter::_draw_animation(string command, bool increment) {
+void MainCharacter::_draw_animation(string command, bool pause) {
 	// check if command (key) exists in character's animations (map)
 	static int sprite_count = 1;
+	// cout << command << endl;
 	if (this->character_animations.count(command)) {
 
 		vector<pair<shared_ptr<SDL_Texture>, SDL_Rect>> sprites = this->character_animations[command];
@@ -90,9 +115,11 @@ void MainCharacter::_draw_animation(string command, bool increment) {
 
 		SDL_Texture* text = sprite.first.get();
 		SDL_Rect dest = sprite.second;
+		dest.x = this->x_pos;
+		dest.y = this->y_pos;
 
 		SDL_RenderCopy(this->mainRend, text, NULL, &dest);
-		if (increment) {
+		if (!pause) {
 			sprite_count++;
 			if (sprite_count >= sprites.size()) {
 				sprite_count = 1;
@@ -105,21 +132,44 @@ void MainCharacter::_draw_animation(string command, bool increment) {
 
 
 void MainCharacter::walk(int left, int right, int up, int down) {
-	if ((left and right) or (up and down)) {
-		return;
-	}
 
-	if (left) {
-		_draw_animation("walk_left");
+	// if no direction keys are pressed, then show last animation, no need to change x_pos or y_pos
+	if (left == 0 and right == 0 and up == 0 and down == 0) {
+		bool pause_animation = true;
+		// cout << this->prev_direction << endl;
+		_draw_animation(this->prev_direction, pause_animation);
 	}
-	else if (right) {
-		_draw_animation("walk_right");
-	}
-	else if (up) {
-		_draw_animation("walk_front");
-	}
-	else if (down) {
-		_draw_animation("walk_back");
+	else {
+		string command;
+		if (left) {
+			command = "walk_left";
+		} else if (right) {
+			command = "walk_right";
+		} else if (up) {
+			command = "walk_back";
+		} else if (down) {
+			command = "walk_front";
+		}
+		// reset velocity before changing x/p_pos, otherwise character moves diagonally when moving left/right
+		this->x_vel = this->y_vel = 0;
+
+		if (left and !right) this->x_vel = -PLAYER_SPEED;
+		if (right and !left) this->x_vel = PLAYER_SPEED;
+		if (up and !down) this->y_vel = -PLAYER_SPEED;
+		if (down and !up) this->y_vel = PLAYER_SPEED;
+
+
+		this->x_pos += x_vel/10;
+		this->y_pos += y_vel/10;
+
+		// boundary detection
+		if (this->x_pos <= 0) this->x_pos = 0;
+		if (this->y_pos <= 0) this->y_pos = 0;
+		if (this->x_pos >= WINDOW_WIDTH - this->width) this->x_pos = WINDOW_WIDTH - this->width;
+		if (this->y_pos >= WINDOW_HEIGHT - this->height) this->y_pos = WINDOW_HEIGHT - this->height;
+
+		_draw_animation(command);
+		this->prev_direction = command;
 	}
 }
 

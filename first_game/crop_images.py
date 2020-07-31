@@ -8,10 +8,10 @@ from time import sleep
 
 def main():
     ss_path = '/Users/landon/Documents/sdl_games/first_game/images'
-    ss_name = 'zombie_spritesheet_with_attack_animation.png'
+    ss_name = 'main_character.png'
 
-    images_dest = '/Users/landon/Documents/sdl_games/first_game/images/zombie_images'
-    animations_dest = '/Users/landon/Documents/sdl_games/first_game/images/zombie_animations'
+    images_dest = '/Users/landon/Documents/sdl_games/first_game/images/character_images'
+    animations_dest = '/Users/landon/Documents/sdl_games/first_game/images/character_animations'
 
     load_in_spritesheet(ss_path, ss_name, images_dest, 0, 0, 832, 1344)
     load_in_spritesheet(ss_path, ss_name, animations_dest, 64, 1408, offset=128) 
@@ -49,14 +49,14 @@ def crop_and_save_imgs(spritesheet, dest, x_start, y_start, x_end, y_end, offset
     subfolder_num = 0
 
     # subfolder_name = "folder" + str(subfolder_num)
-    if 'zombie_images' in folder_name:
+    if 'character_images' in folder_name:
         subfolder_names = ["spellcast_back", "spellcast_left", "spellcast_front", "spellcast_right",
                        "stab_back", "stab_left", "stab_front", "stab_right",
                        "walk_back", "walk_left", "walk_front", "walk_right",
                        "slash_back", "slash_left", "slash_front", "slash_right",
                        "draw_bow_back", "draw_bow_left", "draw_bow_front", "draw_bow_right",
                        "die"]
-    elif 'zombie_animations' in folder_name:
+    elif 'character_animations' in folder_name:
         subfolder_names = ["attack_back", "attack_left", "attack_front", "attack_right"]
 
 
@@ -85,7 +85,7 @@ def crop_and_save_imgs(spritesheet, dest, x_start, y_start, x_end, y_end, offset
             # this could be useful for detecting hit box with enemy hit box when attacking, if I expanded width and height (can move x-y direction)
             # to static 128 pixels, then hit box wouldn't be accurate, should only change from 64x64 to 128x64 when attacking
 
-            if folder_name == "zombie_animations":
+            if folder_name == "character_animations":
                 shift_left = spritesheet.crop((left-64, top, left, top+64))
                 shift_right = spritesheet.crop((left+64, top, left+128, top+64))
                 shift_up = spritesheet.crop((left, top-64, left+64, top))
