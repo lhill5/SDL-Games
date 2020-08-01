@@ -3,6 +3,7 @@
 
 class MainCharacter {
 	protected:
+		float fps;
 		int x_pos = 0, y_pos = 0;
 		int x_vel, y_vel;
 		int width = 64, height = 64;
@@ -19,7 +20,7 @@ class MainCharacter {
 		// vector<int> end_row_num;
 		// vector<const char*> row_name;
 	public:
-		MainCharacter(SDL_Renderer* mainRend);
+		MainCharacter(SDL_Renderer* mainRend, float fps);
 		void _load_in_images(string folder_name);
 		int get_num_files_in_folder(string folder_name);
 		void _draw_animation(string command, bool pause=false);

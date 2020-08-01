@@ -1,7 +1,9 @@
+
 #include "defs.h"
 
 
-MainCharacter::MainCharacter(SDL_Renderer* mainRend) {
+MainCharacter::MainCharacter(SDL_Renderer* mainRend, float fps) {
+	this->fps = fps;
 	// creates reference to main renderer used to draw images to canvas
 	this->mainRend = mainRend;
 	// loads in sprites to MainCharacter instance
@@ -36,7 +38,7 @@ int MainCharacter::get_ypos() {
 
 void MainCharacter::_load_in_images(string folder_name) {
 	string dir_path = "./" + folder_name;
-	cout << dir_path << endl;
+	// cout << dir_path << endl;
 
 	for (const auto& dirEntry : directory_iterator(dir_path)) {
 		// std::cout << typeid(dirEntry.path()).name() << std::endl;
@@ -51,7 +53,7 @@ void MainCharacter::_load_in_images(string folder_name) {
 		// if this path is a directory
 		if (subfolder_name.find(".") == string::npos) {
 			vector<string> image_paths;
-			cout << subdir_path << endl;
+			// cout << subdir_path << endl;
 			// get all image_paths from folder and sort based off image name
 			for (const auto& subdir : directory_iterator(subdir_path)) {
 				auto image_path = subdir.path().string();
@@ -61,7 +63,7 @@ void MainCharacter::_load_in_images(string folder_name) {
 			sort(image_paths.begin(), image_paths.end());
 
 			for (string image_path : image_paths) {
-				cout << image_path << endl;
+				// cout << image_path << endl;
 				shared_ptr<SDL_Texture> text = create_texture_from_image(this->mainRend, image_path);
 
 				SDL_Rect sprite;
@@ -106,12 +108,17 @@ int get_num_files_in_folder(string folder_name) {
 
 void MainCharacter::_draw_animation(string command, bool pause) {
 	// check if command (key) exists in character's animations (map)
-	static int sprite_count = 1;
+	int repeat = 8;
+	static int sprite_count = 1*repeat;
+
 	// cout << command << endl;
 	if (this->character_animations.count(command)) {
 
+		int repeat_sprite_count = sprite_count / repeat;
+
+		// cout << repeat_sprite_count << "\t" << sprite_count << endl;
 		vector<pair<shared_ptr<SDL_Texture>, SDL_Rect>> sprites = this->character_animations[command];
-		pair<shared_ptr<SDL_Texture>, SDL_Rect> sprite = sprites[sprite_count];	
+		pair<shared_ptr<SDL_Texture>, SDL_Rect> sprite = sprites[repeat_sprite_count];	
 
 		SDL_Texture* text = sprite.first.get();
 		SDL_Rect dest = sprite.second;
@@ -121,8 +128,9 @@ void MainCharacter::_draw_animation(string command, bool pause) {
 		SDL_RenderCopy(this->mainRend, text, NULL, &dest);
 		if (!pause) {
 			sprite_count++;
-			if (sprite_count >= sprites.size()) {
-				sprite_count = 1;
+			// cout << sprites.size() << "\t" << repeat_sprite_count << "\t" << sprite_count << endl;
+			if (sprite_count >= sprites.size() * repeat) {
+				sprite_count = 1*repeat;
 			}
 		}
 	} else {
@@ -158,9 +166,8 @@ void MainCharacter::walk(int left, int right, int up, int down) {
 		if (up and !down) this->y_vel = -PLAYER_SPEED;
 		if (down and !up) this->y_vel = PLAYER_SPEED;
 
-
-		this->x_pos += x_vel/10;
-		this->y_pos += y_vel/10;
+		this->x_pos += x_vel/(this->fps);
+		this->y_pos += y_vel/(this->fps);
 
 		// boundary detection
 		if (this->x_pos <= 0) this->x_pos = 0;

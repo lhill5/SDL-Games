@@ -3,9 +3,9 @@
 
 // #define WINDOW_WIDTH 640
 // #define WINDOW_HEIGHT 480
-#define WINDOW_WIDTH 1000
-#define WINDOW_HEIGHT 750
-#define PLAYER_SPEED 50
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 768
+#define PLAYER_SPEED 120
 
 #include <iostream>
 #include <vector>
@@ -43,8 +43,10 @@ using std::pair;
 using std::sort;
 
 // #include "GameWorld.h"
+#include "Game.h"
 #include "game_functions.h"
 #include "MainCharacter.h"
+#include "Tileset.h"
 
 #endif
 

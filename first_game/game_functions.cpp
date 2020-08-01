@@ -1,5 +1,6 @@
 #include "defs.h"
 
+
 shared_ptr<SDL_Window> create_window() {
 	SDL_Window* temp_window;
 	temp_window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
@@ -33,7 +34,11 @@ shared_ptr<SDL_Texture> create_texture_from_image(SDL_Renderer* mainRend, string
 	// necessary for IMG_Load function which takes in a const char* parameter
 	const char* img_path_cstr = img_path.c_str();
 	// cout << img_path << endl;
-	SDL_Surface* image_surface = IMG_Load(img_path_cstr);
+	// try {
+		SDL_Surface* image_surface = IMG_Load(img_path_cstr);
+	// }
+	// catch (...) { }
+	
 	if (!image_surface) {
 		cout << "error loading background image" << endl;
 		exit_program();
@@ -65,6 +70,11 @@ void free_texture(SDL_Texture* txt) {
 		i++;
 	}
 	SDL_DestroyTexture(txt);
+}
+
+
+void here() {
+	cout << "here" << endl;	
 }
 
 
