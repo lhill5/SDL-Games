@@ -1,7 +1,6 @@
 #ifndef TILESET
 #define TILESET
 
-
 class Tileset {
 	protected:
 		float fps;

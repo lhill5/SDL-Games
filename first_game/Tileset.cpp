@@ -1,6 +1,5 @@
 #include "defs.h"
 
-
 map<string, pair<shared_ptr<SDL_Texture>, SDL_Rect>> Tileset::tileset = load_in_tiles("images/tileset/Ground");
 vector<string> Tileset::tileset_names = {};
 
