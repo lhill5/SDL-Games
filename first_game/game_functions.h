@@ -15,6 +15,6 @@ void here();
 shared_ptr<SDL_Texture> create_texture_from_image(SDL_Renderer* mainRend, string img_path);
 pair<SDL_Texture, SDL_Rect> get_sprite_from_texture(SDL_Texture);
 map<string, pair<shared_ptr<SDL_Texture>, SDL_Rect>> load_in_tiles(string folder_name);
-
+pair<int,int> get_xy_coords(int grid_x, int grid_y);
 
 #endif

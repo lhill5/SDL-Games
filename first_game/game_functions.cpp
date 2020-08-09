@@ -1,6 +1,5 @@
 #include "defs.h"
 
-
 shared_ptr<SDL_Window> create_window() {
 	SDL_Window* temp_window;
 	temp_window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
@@ -38,7 +37,7 @@ shared_ptr<SDL_Texture> create_texture_from_image(SDL_Renderer* mainRend, string
 		SDL_Surface* image_surface = IMG_Load(img_path_cstr);
 	// }
 	// catch (...) { }
-	
+
 	if (!image_surface) {
 		cout << "error loading background image" << endl;
 		exit_program();
@@ -54,6 +53,18 @@ shared_ptr<SDL_Texture> create_texture_from_image(SDL_Renderer* mainRend, string
 	shared_ptr<SDL_Texture> sp_image_texture(image_texture, free_texture);
 
 	return sp_image_texture;
+}
+
+
+pair<int,int> get_xy_coords(int grid_x, int grid_y) {
+	int width = Tileset::get_width();
+	int height = Tileset::get_height();
+
+	int x, y;
+	x = grid_x * width;
+	y = (WINDOW_HEIGHT - grid_y * height) - height; // reverses grid system, y=0 is at bottom now
+	pair<int,int> coords(x,y);
+	return coords;
 }
 
 

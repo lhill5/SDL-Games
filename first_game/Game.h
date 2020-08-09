@@ -5,11 +5,14 @@ class Game {
 	private:
 		static shared_ptr<SDL_Window> window;
 		static shared_ptr<SDL_Renderer> mainRend;
+		static float gravity;
 
 	public:
 		Game();
-		static SDL_Window* get_window() { return window.get(); }
-		static SDL_Renderer* get_main_rend() { return mainRend.get(); }
+		static SDL_Window* get_window();
+		static SDL_Renderer* get_main_rend();
+		static float get_gravity();
+
 };
 
 

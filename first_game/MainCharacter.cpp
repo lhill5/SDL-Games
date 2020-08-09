@@ -3,6 +3,13 @@
 
 
 MainCharacter::MainCharacter(SDL_Renderer* mainRend, float fps) {
+
+	pair<int,int> coords = get_xy_coords(8, 1);
+	this->x_pos = coords.first;
+	this->y_pos = coords.second - this->height + 10; // + 10 to sink character into ground
+	this->ground_height = this->y_pos;
+	this->reset_jump_strength();
+
 	this->fps = fps;
 	// creates reference to main renderer used to draw images to canvas
 	this->mainRend = mainRend;
@@ -107,6 +114,11 @@ int get_num_files_in_folder(string folder_name) {
 
 
 void MainCharacter::_draw_animation(string command, bool pause) {
+
+	// if (command == "") {
+	// 	command = this->prev_direction;
+	// }
+
 	// check if command (key) exists in character's animations (map)
 	int repeat = 8;
 	static int sprite_count = 1*repeat;
@@ -139,16 +151,19 @@ void MainCharacter::_draw_animation(string command, bool pause) {
 }
 
 
-void MainCharacter::walk(int left, int right, int up, int down) {
+void MainCharacter::walk(int left, int right, int up, int down, bool& jump) {
 
+	bool pause_animation = false;
 	// if no direction keys are pressed, then show last animation, no need to change x_pos or y_pos
-	if (left == 0 and right == 0 and up == 0 and down == 0) {
-		bool pause_animation = true;
-		// cout << this->prev_direction << endl;
+	// if jumping, then should go to else, since y_pos should change if not walking due to gravity
+	if (not jump and (left == 0 and right == 0 and up == 0 and down == 0)) {
+		pause_animation = true;
 		_draw_animation(this->prev_direction, pause_animation);
+		// cout << this->prev_direction << endl;
 	}
+
 	else {
-		string command;
+		string command = "";
 		if (left) {
 			command = "walk_left";
 		} else if (right) {
@@ -158,6 +173,14 @@ void MainCharacter::walk(int left, int right, int up, int down) {
 		} else if (down) {
 			command = "walk_front";
 		}
+
+		// if no direction and jumping, then pause animation (not walking while jumping up)
+		// and fall downward with previous direction
+		if (command == "" and jump) {
+			pause_animation = true;
+			command = this->prev_direction;
+		}
+
 		// reset velocity before changing x/p_pos, otherwise character moves diagonally when moving left/right
 		this->x_vel = this->y_vel = 0;
 
@@ -166,17 +189,56 @@ void MainCharacter::walk(int left, int right, int up, int down) {
 		if (up and !down) this->y_vel = -PLAYER_SPEED;
 		if (down and !up) this->y_vel = PLAYER_SPEED;
 
+		float gravity = Game::get_gravity();
+		//cout << jump << endl;
+		if (jump) {
+			
+			this->y_vel -= this->jump_strength;
+			this->jump_strength -= gravity;
+			this->y_pos += y_vel;
+
+			// cout << this->jump_strength << endl;
+		}
+
+
 		this->x_pos += x_vel/(this->fps);
-		this->y_pos += y_vel/(this->fps);
+		// this->y_pos += (float) y_vel/(this->fps);
+
+		// cout << this->y_vel << endl;		
+		// cout << this->y_vel << endl;
+		// cout << y_vel << " " << this->y_pos << endl;
+
+		// bool onGround;
+		//  //cout << this->y_pos << " " << this->ground_height << endl;
+		// if (jump && this->y_pos > this->ground_height) {
+		// 	onGround = false;
+		// } else {
+		// 	onGround = true;
+		// }
+
+		// if (onGround) {
+		// 	this->y_pos = this->ground_height; // if no longer jumping, set height to ground height
+		// }
 
 		// boundary detection
 		if (this->x_pos <= 0) this->x_pos = 0;
 		if (this->y_pos <= 0) this->y_pos = 0;
-		if (this->x_pos >= WINDOW_WIDTH - this->width) this->x_pos = WINDOW_WIDTH - this->width;
-		if (this->y_pos >= WINDOW_HEIGHT - this->height) this->y_pos = WINDOW_HEIGHT - this->height;
 
-		_draw_animation(command);
+		if (this->x_pos >= WINDOW_WIDTH - this->width) {
+			this->x_pos = WINDOW_WIDTH - this->width;
+		}
+		if (this->y_pos > this->ground_height) {
+			this->y_pos = this->ground_height;
+			this->reset_jump_strength();
+		 	jump = false;
+		}
+
+		_draw_animation(command, pause_animation);
 		this->prev_direction = command;
 	}
+}
+
+void MainCharacter::reset_jump_strength() {
+	this->jump_strength = this->max_jump_strength;
 }
 

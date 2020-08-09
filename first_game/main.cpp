@@ -33,13 +33,11 @@ int main(void) {
 	// hero.load_in_images("images/zombie_images");
 
 	int up = 0, down = 0, left = 0, right = 0;
-
-	int x_pos = hero.get_xpos();
-	int y_pos = hero.get_ypos();
-	int x_vel, y_vel;
-
+	bool jump = false;
 
 	// animation loop
+	int i = 0;
+
 	bool game_loop = true;
 	while (game_loop) {
 		// event loop
@@ -68,13 +66,18 @@ int main(void) {
 							break;
 						case SDL_SCANCODE_W:
 						case SDL_SCANCODE_UP:
+							break; // for now disable ability to walk up/down
 							up = 1;
 							left = right = down = 0;
 							break;
 						case SDL_SCANCODE_S:
 						case SDL_SCANCODE_DOWN:
+							break;
 							down = 1;
 							left = right = up = 0;
+							break;
+						case SDL_SCANCODE_SPACE:
+							jump = true;
 							break;
 						default:
 							break;
@@ -106,7 +109,6 @@ int main(void) {
 			}
 		}
 
-
 		// cout << left << " " << right << " " << up << " " << down << endl;
 
 		SDL_RenderClear(mainRend);
@@ -116,7 +118,7 @@ int main(void) {
 		// draw tiles
 		tiles.draw_tile_background();
 		// draw character
-		hero.walk(left, right, up, down);
+		hero.walk(left, right, up, down, jump);
 		
 		SDL_RenderPresent(mainRend);
 
@@ -124,6 +126,9 @@ int main(void) {
 		SDL_Delay(1000/fps); // wait 1/60 second (parameter in milliseconds)
 
 	}
+
+	tiles.print_bg_coords();
+
     return 0;
 }
 

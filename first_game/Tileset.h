@@ -4,10 +4,13 @@
 class Tileset {
 	protected:
 		float fps;
-		int x_pos = 0, y_pos = 0;
-		int width = 64, height = 64;
+		int x_pos, y_pos;
+		// int start_x = 0, start_y = 0;
 
+		static int num_drawn_tiles;
+		static int width, height;
 		static vector<string> tileset_names;
+		static vector<pair<int,int>> tileset_coords;
 		static map<string, pair<shared_ptr<SDL_Texture>, SDL_Rect>> tileset;
 
 	public:
@@ -16,6 +19,9 @@ class Tileset {
 		static void draw_tile(string type, int grid_x, int grid_y);
 		static void draw_tile_background();
 		static void print_tiles();
+		static void print_bg_coords();
+		static int get_width() { return width; }
+		static int get_height() { return height; }
 };
 
 
